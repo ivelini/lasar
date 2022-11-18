@@ -28,4 +28,13 @@ class VendorRepository extends CoreRepository
 
         return $idAndName;
     }
+
+    public function getVendorsToFilter()
+    {
+        $models = $this->startConditions()
+            ->select('id', 'name')
+            ->get();
+
+        return $this->modelsAttributesToArray($models)->all();
+    }
 }

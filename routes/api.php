@@ -23,3 +23,5 @@ Route::post('/catalog/import/tire', [\App\Http\Controllers\Api\Backend\Catalog\I
 Route::post('/catalog/import/price', [\App\Http\Controllers\Api\Backend\Catalog\ImportDataController::class, 'importPrice']);
 Route::post('/catalog/import/status', [\App\Http\Controllers\Api\Backend\Catalog\ImportDataController::class, 'getUploadStatus']);
 Route::get('/catalog/import/test', [\App\Http\Controllers\Api\Backend\Catalog\ImportDataController::class, 'test']);
+
+Route::get('/catalog/filter-tires', [\App\Http\Controllers\Api\Backend\Catalog\FilterTiresController::class, 'getFilteredData']);

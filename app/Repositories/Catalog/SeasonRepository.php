@@ -28,4 +28,13 @@ class SeasonRepository extends CoreRepository
 
         return $idAndName;
     }
+
+    public function getSeasonsToFilter()
+    {
+        $models = $this->startConditions()
+            ->select('id', 'name')
+            ->get();
+
+        return $this->modelsAttributesToArray($models)->all();
+    }
 }

@@ -17,6 +17,6 @@ class Price extends Model
 
     public function storage()
     {
-        return $this->belongsTo(Storage::class, 'id', 'storage_id');
+        return $this->belongsTo(Storage::class, 'storage_id', 'id');
     }
 }

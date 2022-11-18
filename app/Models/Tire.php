@@ -12,7 +12,7 @@ class Tire extends Model
 
     public function modelPosition()
     {
-        return $this->belongsTo(ModelPosition::class);
+        return $this->belongsTo(ModelPosition::class, 'model_id', 'id');
     }
 
     public function vendor()
@@ -29,5 +29,16 @@ class Tire extends Model
     {
         return $this->belongsTo(Season::class);
     }
+
+    public function vendorsCode()
+    {
+        return $this->hasMany(VendorCode::class, 'tire_id', 'id');
+    }
+
+    public function sallersCode()
+    {
+        return $this->hasMany(SallerCode::class, 'tire_id', 'id');
+    }
+
 
 }

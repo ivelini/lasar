@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api\Backend\Catalog;
 use App\Helpers\DbHelper;
 use App\Http\Controllers\Controller;
 use App\Jobs\ImportCatalogPriceJob;
+use App\Repositories\Catalog\PricesRepository;
 use App\Repositories\Catalog\SettingsCatalogepository;
+use App\Repositories\Catalog\TiresRepository;
 use App\Repositories\Catalog\UpdateCatalogRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -54,23 +56,23 @@ class ImportDataController extends Controller
         return ['is_job_update_created' => true];
     }
 
-    public function test(Request $request): array
+    public function test(Request $request)
     {
-//        $settings = SettingsCatalogepository::getModel('update', 'tires_price');
-//
-//        if(!empty($settings)) {
-//            $selectedKeysHeader = collect(json_decode($settings->settings));
-//        }
-//        else {
-//            $selectedKeysHeader = collect(json_decode($request->query('selectedKeys')));
-//        }
 
-        $importDataService = new ImportDataCatalogService('tmp\UserName_4871.xlsx');
-        $keysHeader = $importDataService->getKyesHeaderFromDataFile();
-//        $importDataService->setSelectedKeysHeader($selectedKeysHeader);
-//        $importDataService->importPrice();
+        $data = [
+//            'price'     => ['min' => 0, 'max' => 2500],
+//            'vendorId'  => 28,
+//            'modelId'   => 727,
+//            'seasonId'  => 1,
+//            'width'     => 175,
+//            'height'    => 65,
+//            'diameter'  => 14,
+//            'isSpikes'  => 1,
+        ];
 
-        dd($keysHeader);
+        $tires = (new PricesRepository)->getByFilterData($data);
+
+        return $tires;
     }
 
     public function getUploadStatus(Request $request): array

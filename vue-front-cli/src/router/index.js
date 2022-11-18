@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import PageMain from "@/views/PageMain";
 import PageFilterCategory from '@/views/Catalog/PageFilterCategory'
 import PageItem from "@/views/Catalog/PageItem";
+import PageFiltered from "@/views/Catalog/PageFiltered";
 
 
 const routes = [
@@ -11,9 +12,14 @@ const routes = [
         component: PageMain
     },
     {
-        name:'filterTires',
+        name:'filterTiresCategory',
         path: '/catalog/tires',
         component: PageFilterCategory
+    },
+    {
+        name:'filteredTires',
+        path: '/filter',
+        component: PageFiltered
     },
     {
         name:'item',

@@ -10,7 +10,7 @@ class Vendor extends Model
     use HasFactory;
     protected $guarded = [];
 
-    public function modelPositions()
+    public function modelsPosition()
     {
         return $this->hasMany(ModelPosition::class);
     }
