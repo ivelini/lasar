@@ -5,25 +5,19 @@
                 <div id="filter-params" class="tab-content active">
                     <div class="form">
                         <div data-v-14a2e3ec="">
-                            <filter-input />
+                            <filter-input v-for="(data, key) in filteredData" :key="key"
+                                :data="formatInputData(key,data)"
+                                @set-selected-input="setDataFilter($event)"
+                                @remove-key="removeKey($event)">
+                            </filter-input>
 
                             <div data-v-14a2e3ec="" class="form-item">
-                                <div data-v-14a2e3ec="" class="toggle-list ">
-                                    <div data-v-14a2e3ec="" class="toggle-list-content">
-                                        <div data-v-14a2e3ec="" class="price-fields">
-                                            <div data-v-14a2e3ec="" class="inputs"><input data-v-14a2e3ec="" type="text" id="price-min" value="1 700 ₽">
-                                                <input data-v-14a2e3ec="" type="text" id="price-max" value="186 060 ₽">
-                                            </div>
-                                            <div data-v-14a2e3ec="" class="labels">
-                                                <label data-v-14a2e3ec="" for="price-min">От</label>
-                                                <label data-v-14a2e3ec="" for="price-max">До</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div data-v-14a2e3ec="" class="form-item">
-                                <button data-v-14a2e3ec="" type="button" class="submit-form">Найти шины</button>
+                                <button data-v-14a2e3ec=""
+                                        type="button"
+                                        class="submit-form"
+                                        @click="sendKey">
+                                    <slot></slot>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -39,8 +33,36 @@ import FilterInput from "@/components/FilterInput";
 export default {
     components: {
         FilterInput
+    },
+    emits: ['sendFilteredKey'],
+    props: {
+        filteredData: {
+            type: Object,
+            required: true
+        }
+    },
+    data() {
+        return {
+            selectedData: {}
+        }
+    },
+    methods: {
+        formatInputData(key, data) {
+            let obj = {};
+            obj[key] = data;
+            return obj;
+        },
+        setDataFilter(arr) {
+            this.selectedData[arr['key']] = arr['value']
+        },
+        removeKey(key){
+            if (key in this.selectedData) delete this.selectedData[key]
+        },
+        sendKey() {
+            console.log(this.selectedData)
+            this.$emit('sendFilteredKey', this.selectedData)
+        }
     }
-
 }
 </script>
 

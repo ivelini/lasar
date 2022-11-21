@@ -4,7 +4,11 @@
         <div data-v-74ca2ebb="" class="container">
             <div data-v-74ca2ebb="" class="row grid-4 gap-20">
                 <div data-v-74ca2ebb="" class="col-1">
-                    <filter-section />
+                    <filter-section
+                        :filtered-data="filter.filteredData"
+                        @send-filtered-key="getFilteredItems($event)">
+                        Найти шины
+                    </filter-section>
                 </div>
                 <div data-v-74ca2ebb="" class="col-3 relative">
                     <div data-v-74ca2ebb="" class="filter-sort">
@@ -53,9 +57,9 @@
                         </div>
                     </div>
                     <div data-v-74ca2ebb="" class="products products-list">
-
-                        <item-horizontal-element />
-
+                        <item-horizontal-element v-for="item in filter.filteredItems"
+                            :item="item">
+                        </item-horizontal-element>
                     </div>
                     <pagination />
                 </div>
@@ -69,6 +73,7 @@ import breadcrumbs from "@/views/layouts/Catalog/FilterCategory/breadcrumbs";
 import FilterSection from "@/components/FilterSection";
 import itemHorizontalElement from "@/views/layouts/Catalog/FilterCategory/itemHorizontalElement";
 import pagination from "@/views/layouts/Catalog/FilterCategory/pagination";
+import axios from 'axios'
 
 export default {
     components: {
@@ -76,6 +81,44 @@ export default {
         FilterSection,
         itemHorizontalElement,
         pagination
+    },
+    data() {
+        return {
+            apiUrl: {
+                getFilteredData: 'http://lasar/api/catalog/filter-keys',
+                getFilteredTires: 'http://lasar/api/catalog/filtered-tires',
+            },
+            filter: {
+                filteredData: {},
+                filteredItems: []
+            },
+            paginator: {
+                page: 1,
+            },
+        }
+    },
+    mounted() {
+        this.getFilteredData()
+    },
+    methods: {
+        async getFilteredData() {
+            let response = await fetch(this.apiUrl.getFilteredData);
+
+            if (response.ok) {
+                this.filter.filteredData = await response.json();
+            }
+        },
+        getFilteredItems(data) {
+            axios.post(this.apiUrl.getFilteredTires, {
+                filteredData: data,
+                page: this.paginator.page
+            })
+            .then(response => {
+                console.log(data)
+                console.log(response.data)
+                this.filter.filteredItems = response.data.items
+            })
+        }
     }
 }
 </script>

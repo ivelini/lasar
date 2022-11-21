@@ -24,4 +24,5 @@ Route::post('/catalog/import/price', [\App\Http\Controllers\Api\Backend\Catalog\
 Route::post('/catalog/import/status', [\App\Http\Controllers\Api\Backend\Catalog\ImportDataController::class, 'getUploadStatus']);
 Route::get('/catalog/import/test', [\App\Http\Controllers\Api\Backend\Catalog\ImportDataController::class, 'test']);
 
-Route::get('/catalog/filter-tires', [\App\Http\Controllers\Api\Backend\Catalog\FilterTiresController::class, 'getFilteredData']);
+Route::get('/catalog/filter-keys', [\App\Http\Controllers\Api\Backend\Catalog\FilterTiresController::class, 'getFilteredData']);
+Route::post('/catalog/filtered-tires', [\App\Http\Controllers\Api\Backend\Catalog\FilterTiresController::class, 'getFilteredTires']);

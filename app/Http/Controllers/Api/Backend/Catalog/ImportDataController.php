@@ -58,9 +58,10 @@ class ImportDataController extends Controller
 
     public function test(Request $request)
     {
-
-        $data = [
-//            'price'     => ['min' => 0, 'max' => 2500],
+        $data = $request->query();
+//        $data = [
+//            'price.min'     => 10,
+//            'price.max'     => 20,
 //            'vendorId'  => 28,
 //            'modelId'   => 727,
 //            'seasonId'  => 1,
@@ -68,11 +69,11 @@ class ImportDataController extends Controller
 //            'height'    => 65,
 //            'diameter'  => 14,
 //            'isSpikes'  => 1,
-        ];
+//        ];
 
-        $tires = (new PricesRepository)->getByFilterData($data);
+        $tires = (new PricesRepository)->getPaginationByFilterData($data, 20);
 
-        return $tires;
+        dd($tires);
     }
 
     public function getUploadStatus(Request $request): array

@@ -19,12 +19,21 @@ class FilterTiresController extends Controller
             'width'  => $tiresRepository->getModelsTableAttributesToArray('width', 'width', 'width')->all(),
             'height'  => $tiresRepository->getModelsTableAttributesToArray('height', 'height','height')->all(),
             'diameter'  => $tiresRepository->getModelsTableAttributesToArray('diameter', 'diameter','diameter')->all(),
-            'seasons'   => (new SeasonRepository)->getSeasonsToFilter(),
+            'seasonId'   => (new SeasonRepository)->getSeasonsToFilter(),
             'isSpikes'  => [0, 1],
-            'vendors'   => (new VendorRepository)->getVendorsToFilter(),
+            'vendorId'   => (new VendorRepository)->getVendorsToFilter(),
             'prices'    => (new PricesRepository())->getMinAndMaxPrice(),
         ];
 
-        return $data;
+        return json_encode($data);
+    }
+
+    public function getFilteredTires(Request $request)
+    {
+        $data = $request->input('filteredData');
+
+        $paginatePage = (new PricesRepository)->getPaginationByFilterData($data);
+
+        return json_encode($paginatePage);
     }
 }

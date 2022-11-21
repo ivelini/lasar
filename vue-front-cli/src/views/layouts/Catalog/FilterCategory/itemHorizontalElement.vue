@@ -8,11 +8,7 @@
                 </a>
             </div>
             <div data-v-62d65988="" class="seasonality">
-                <div data-v-62d65988="" class="seasonality-item">
-                    <div data-v-62d65988="" class="season season-winter"></div>
-
-                </div>
-                <div data-v-62d65988="" class="seasonality-item">
+                <div v-show="item.isSpikes" data-v-62d65988="" class="seasonality-item">
                     <div data-v-62d65988="" class="season season-spikes"></div>
 
                 </div>
@@ -22,21 +18,21 @@
         <div data-v-62d65988="" class="product-info">
             <h3 data-v-62d65988="" class="title">
                 <a data-v-62d65988="" href="#" class="">
-                    Шина Bridgestone Blizzak Spike-02 195/55 R16 87T
+                    {{ item.title }}
                     <!---->
                 </a>
             </h3>
             <div data-v-62d65988="" class="article">
-                Код товара: R127923
+                Код товара: {{ item.num }}
             </div>
 
 
             <!---->
         </div>
         <div data-v-62d65988="" class="price-stocks">
-            <div data-v-62d65988="" class="price"><span data-v-62d65988="">11 260 ₽</span></div>
+            <div data-v-62d65988="" class="price"><span data-v-62d65988="">{{ item.price }} ₽</span></div>
             <div data-v-62d65988="" class="stock">
-                В наличии 8 шт.
+                В наличии {{ item.count }} шт.
                 <!---->
             </div>
             <div data-v-62d65988="" class="dates">
@@ -55,7 +51,7 @@
                             <rect data-v-f8a82ede="" x="13" width="1" height="13" rx="0.5" transform="rotate(90 13 0)" fill="#343434"></rect>
                         </svg>
                     </button>
-                    <input data-v-f8a82ede="" type="number" value="4">
+                    <input data-v-f8a82ede="" type="number" :value="item.count >= 4 ? 4 : item.count">
                     <button data-v-f8a82ede="" type="button" class="plus">
                         <svg data-v-f8a82ede="" width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect data-v-f8a82ede="" x="6" width="1" height="13" rx="0.5" fill="#343434"></rect>
@@ -74,7 +70,11 @@
 
 <script>
 export default {
-
+    props: {
+        item: {
+            required: true
+        },
+    }
 }
 </script>
 

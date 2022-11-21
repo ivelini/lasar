@@ -38,4 +38,15 @@ abstract class CoreRepository
 
         return $models;
     }
+
+    public function getAttributeById($attribute, $id)
+    {
+        $attribute = $this->startConditions()
+            ->where('id', $id)
+            ->pluck($attribute)
+            ->first();
+
+        return $attribute;
+
+    }
 }

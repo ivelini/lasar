@@ -6,6 +6,7 @@ namespace App\Repositories\Catalog;
 use App\Models\Price as Model;
 use App\Repositories\CoreRepository;
 
+
 class PricesRepository extends CoreRepository
 {
     public function __construct()
@@ -18,7 +19,7 @@ class PricesRepository extends CoreRepository
         return Model::class;
     }
 
-    public function getByFilterData($data)
+    public function getPaginationByFilterData($data, $paginate = 20)
     {
 //        $data = [
 //            'price'     => ['min' => 0, 'max' => 3200],
@@ -31,14 +32,12 @@ class PricesRepository extends CoreRepository
 //            'isSpikes'  => 1,
 //        ];
 
-        $prices = $this->startConditions();
+        $paginator = $this->startConditions();
 
-        if (array_key_exists('price', $data)) {
-            $prices = $prices->where('price', '>=', $data['price']['min']);
-            $prices = $prices->where('price', '<=', $data['price']['max']);
-        }
+        if (array_key_exists('price.min', $data)) $paginator = $paginator->where('price', '>=', $data['price.min']);
+        if (array_key_exists('price.max', $data)) $paginator = $paginator->where('price', '<=', $data['price.max']);
 
-        $prices = $prices->whereHasMorph(
+        $paginator = $paginator->whereHasMorph(
                 'priceable',
                 ['vendor_code', 'saller_code'],
                 function ($query) use ($data) {
@@ -65,10 +64,10 @@ class PricesRepository extends CoreRepository
                 }
             )
             ->with('priceable.tire.modelPosition.vendor', 'priceable.saller', 'storage')
-            ->get();
+            ->paginate($paginate);
 
 
-        $prices = $prices->map(function ($price) {
+        $tires = collect($paginator->items())->map(function ($price) {
             $data['id'] = $price->priceable->tire->id;
 
             $data['title'] = 'Шина ' .
@@ -79,23 +78,46 @@ class PricesRepository extends CoreRepository
                 if(!empty($price->priceable->tire->index_speed)) $data['title'] .= ' ' . $price->priceable->tire->index_speed;
 
             $data['num'] = $price->priceable->tire->num;
-            $data['price'] = $price->price;
+            $data['price'] = number_format(rtrim(rtrim($price->price, '0'), '.'), 0, '', ' ');
             $data['storage'] = $price->storage->name;
             $data['storage_vol'] = $price->storage->volume;
             $data['count'] = $price->count;
             $data['vendor'] = $price->priceable->tire->modelPosition->vendor->name;
             $data['model'] = $price->priceable->tire->modelPosition->name;
+            $data['isSpikes'] = $price->priceable->tire->is_spikes;
 
             return $data;
         });
 
-        return $prices;
+        $paginatePage['paginator']['title'] = '';
+
+        if (array_key_exists('vendorId', $data)) {
+            $paginatePage['paginator']['title'] .= 'Шины ' . (new VendorRepository)->getAttributeById('name', $data['vendorId']);
+        }
+
+        if (array_key_exists('width', $data)) {
+            $paginatePage['paginator']['title'] .= ' ' . $data['width'];
+        }
+
+        if (array_key_exists('height', $data)) {
+            $paginatePage['paginator']['title'] .= (array_key_exists('width', $data)) ? '/' . $data['height'] : ' ' . $data['height'];
+        }
+
+        $paginatePage['items'] = $tires->all();
+        $paginatePage['paginator']['curent_page'] = $paginator->currentPage();
+        $paginatePage['paginator']['last_page'] = $paginator->lastPage();
+        $paginatePage['paginator']['total_items'] = $paginator->total();
+
+        return $paginatePage;
     }
 
     public function getMinAndMaxPrice()
     {
         $models = $this->startConditions()->pluck('price');
 
-        return ['min' => $models->min(), 'max' => $models->max()];
+        return [
+            'min' => number_format(rtrim(rtrim($models->min(), '0'), '.'), 0, '', ' '),
+            'max' => number_format(rtrim(rtrim($models->max(), '0'), '.'), 0, '', ' ')
+        ];
     }
 }
