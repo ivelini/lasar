@@ -89,10 +89,18 @@ class PricesRepository extends CoreRepository
             return $data;
         });
 
-        $paginatePage['paginator']['title'] = '';
+        $paginatePage['paginator']['title'] = 'Шины';
+
+        if (array_key_exists('seasonId', $data)) {
+            $paginatePage['paginator']['title'] .= ' ' . (new SeasonRepository())->getAttributeById('name', $data['seasonId']);
+        }
+
+        if (array_key_exists('isSpikes', $data)) {
+            $paginatePage['paginator']['title'] .= ($data['isSpikes']) ? ' шипованные' :  ' нешипованные';
+        }
 
         if (array_key_exists('vendorId', $data)) {
-            $paginatePage['paginator']['title'] .= 'Шины ' . (new VendorRepository)->getAttributeById('name', $data['vendorId']);
+            $paginatePage['paginator']['title'] .= ' ' . (new VendorRepository)->getAttributeById('name', $data['vendorId']);
         }
 
         if (array_key_exists('width', $data)) {
@@ -103,8 +111,14 @@ class PricesRepository extends CoreRepository
             $paginatePage['paginator']['title'] .= (array_key_exists('width', $data)) ? '/' . $data['height'] : ' ' . $data['height'];
         }
 
+        if (array_key_exists('diameter', $data)) {
+            $paginatePage['paginator']['title'] .= ' R' . $data['diameter'];
+        }
+
+
+
         $paginatePage['items'] = $tires->all();
-        $paginatePage['paginator']['curent_page'] = $paginator->currentPage();
+        $paginatePage['paginator']['current_page'] = $paginator->currentPage();
         $paginatePage['paginator']['last_page'] = $paginator->lastPage();
         $paginatePage['paginator']['total_items'] = $paginator->total();
 

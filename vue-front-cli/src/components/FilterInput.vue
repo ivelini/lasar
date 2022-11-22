@@ -1,7 +1,9 @@
 <template>
     <div v-if="key !== 'prices'" data-v-14a2e3ec="" class="input-field form-item">
         <div data-v-6ebc2317="" data-v-14a2e3ec="" data-name="test" class="custom-select" ref="divCustomSelect">
-            <div data-v-6ebc2317="" class="custom-select-label">{{ key }}</div>
+            <div data-v-6ebc2317="" class="custom-select-label">
+                {{ Object.prototype.hasOwnProperty.call(transliteNameInpyts, key) ? transliteNameInpyts[key] : key }}
+            </div>
             <input data-v-6ebc2317=""
                    type="text"
                    readonly="readonly"
@@ -48,6 +50,11 @@ export default {
         data: {
             type: Object,
             required: true,
+        },
+        transliteNameInpyts: {
+            type: Object,
+            required: false,
+            default: {}
         }
     },
     data() {
@@ -78,14 +85,14 @@ export default {
         },
         resetSelect(key) {
             this.elInput.value = '';
-            this.addRemoveClass(this.divCustomSelectOptions, 'active')
+            this.addRemoveClass(this.divCustomSelectOptions, 'active', 'remove')
             this.addRemoveClass(this.$refs.divCustomSelect, 'selected')
             this.$emit('removeKey', key )
         },
         addRemoveClass(element, className, action = null) {
             let classElement = element.classList
 
-            classElement.contains(className) == true &&  action != 'add'?
+            classElement.contains(className) == true &&  action != 'add' ?
                     classElement.remove(className) :
                     classElement.add(className);
         },

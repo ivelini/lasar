@@ -17,8 +17,8 @@
             </ul>
         </div>
         <div data-v-74ca2ebb="" class="page-header">
-            <h1 data-v-74ca2ebb="">Шины Bridgestone</h1>
-            <div data-v-74ca2ebb="" class="header-sub">Найдено 709 товаров</div>
+            <h1 data-v-74ca2ebb="">{{ paginator.title }}</h1>
+            <div data-v-74ca2ebb="" class="header-sub">Найдено {{ paginator.total_items }} товаров</div>
         </div>
         <h2 data-v-74ca2ebb="">Размеры и параметры</h2>
     </div>
@@ -26,7 +26,7 @@
 
 <script>
 export default {
-
+    props: ['paginator']
 }
 </script>
 

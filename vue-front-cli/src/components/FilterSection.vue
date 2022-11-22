@@ -7,6 +7,7 @@
                         <div data-v-14a2e3ec="">
                             <filter-input v-for="(data, key) in filteredData" :key="key"
                                 :data="formatInputData(key,data)"
+                                :translite-name-inpyts="transliteNameInputs()"
                                 @set-selected-input="setDataFilter($event)"
                                 @remove-key="removeKey($event)">
                             </filter-input>
@@ -59,8 +60,18 @@ export default {
             if (key in this.selectedData) delete this.selectedData[key]
         },
         sendKey() {
-            console.log(this.selectedData)
             this.$emit('sendFilteredKey', this.selectedData)
+        },
+        transliteNameInputs() {
+            return {
+                width: 'Ширина',
+                height: 'Профиль',
+                diameter: 'Диаметр',
+                seasonId: 'Сезон',
+                isSpikes: 'Наличие шипов',
+                vendorId: 'Производитель',
+                prices: 'Цена'
+            }
         }
     }
 }

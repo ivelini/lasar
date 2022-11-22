@@ -1,26 +1,16 @@
 <template>
     <div data-v-28573630="" data-v-74ca2ebb="" class="pagination-block pagination-offset">
-        <!---->
         <ul data-v-28573630="" class="pagination">
-            <li data-v-28573630=""><a data-v-28573630="" href="https://74kolesa.ru/podbor_shin/bridgestone" aria-current="page" class="nuxt-link-exact-active nuxt-link-active active">
-                1
-            </a>
-            </li>
-            <li data-v-28573630=""><a data-v-28573630="" href="https://74kolesa.ru/podbor_shin/bridgestone?page=2" class="">
-                2
-            </a>
-            </li>
-            <li data-v-28573630=""><a data-v-28573630="" href="https://74kolesa.ru/podbor_shin/bridgestone?page=3" class="">
-                3
-            </a>
-            </li>
-            <li data-v-28573630=""><a data-v-28573630="" href="https://74kolesa.ru/podbor_shin/bridgestone?page=4" class="">
-                4
-            </a>
-            </li>
-            <li data-v-28573630=""><a data-v-28573630="" href="https://74kolesa.ru/podbor_shin/bridgestone?page=5" class="">
-                5
-            </a>
+            <li v-for="(item, key) in arr" :key="key"
+                data-v-28573630="">
+                <a data-v-28573630=""
+                   :href="'?page=' + item"
+                   aria-current="page"
+                   :class="{'active': item == current_page ? true : false}"
+                   @click.prevent="clickPage(item)"
+                >
+                    {{ item }}
+                </a>
             </li>
         </ul>
     </div>
@@ -28,7 +18,40 @@
 
 <script>
 export default {
-    name: "pagination"
+    props: ['current_page', 'last_page'],
+    data() {
+        return {
+            arr: [],
+            current: 0
+        }
+    },
+    mounted() {
+        let start = 1;
+        let end = 0;
+        if(this.current_page == 1 && this.last_page >= 5) {
+            end = 5
+        } else if(this.current_page == 1 && this.last_page <= 5) {
+            end = this.last_page
+        }
+
+        if (this.current_page != 1 && this.current_page < this.last_page) {
+            start = this.current_page - 2 > 0 ? this.current_page - 2 : this.current_page - 1;
+
+            end = this.current_page + 2 <= this.last_page ? this.current_page + 2 : this.current_page + 1;
+            end = this.current_page + 3 == 5 ? this.current_page + 3 : end;
+
+        }
+
+        for (let i = start; i <= end; i++) {
+            this.arr.push(i)
+        }
+        this.current = this.current_page;
+    },
+    methods: {
+        clickPage(item) {
+            this.$emit('clickPage' , item)
+        }
+    }
 }
 </script>
 

@@ -1,11 +1,11 @@
 <template>
     <div data-v-74ca2ebb="">
-        <breadcrumbs />
+        <breadcrumbs :paginator="paginator"/>
         <div data-v-74ca2ebb="" class="container">
             <div data-v-74ca2ebb="" class="row grid-4 gap-20">
                 <div data-v-74ca2ebb="" class="col-1">
                     <filter-section
-                        :filtered-data="filter.filteredData"
+                        :filtered-data="filter.filteredParams"
                         @send-filtered-key="getFilteredItems($event)">
                         Найти шины
                     </filter-section>
@@ -61,7 +61,11 @@
                             :item="item">
                         </item-horizontal-element>
                     </div>
-                    <pagination />
+                    <pagination v-if="paginator.last_page > 1" :key="paginator.current_page"
+                        :current_page="paginator.current_page"
+                        :last_page="paginator.last_page"
+                        @click-page="clickPaginator($event)"
+                    />
                 </div>
             </div>
         </div>
@@ -85,14 +89,16 @@ export default {
     data() {
         return {
             apiUrl: {
-                getFilteredData: 'http://lasar/api/catalog/filter-keys',
+                getFilteredParams: 'http://lasar/api/catalog/filter-keys',
                 getFilteredTires: 'http://lasar/api/catalog/filtered-tires',
             },
             filter: {
+                filteredParams: {},
                 filteredData: {},
-                filteredItems: []
+                filteredItems: [],
             },
             paginator: {
+                title: 'Поиск шин по параметрам',
                 page: 1,
             },
         }
@@ -101,23 +107,33 @@ export default {
         this.getFilteredData()
     },
     methods: {
-        async getFilteredData() {
-            let response = await fetch(this.apiUrl.getFilteredData);
-
-            if (response.ok) {
-                this.filter.filteredData = await response.json();
-            }
+        getFilteredData() {
+            axios.get(this.apiUrl.getFilteredParams)
+            .then(response => {
+                this.filter.filteredParams = response.data
+            })
+            .catch(error => {
+                console.log('error: ', error)
+            })
         },
         getFilteredItems(data) {
+            this.filter.filteredData = data
+            this.sendGetItems()
+
+        },
+        clickPaginator(page) {
+            this.paginator.page = page
+            this.sendGetItems()
+        },
+        sendGetItems() {
             axios.post(this.apiUrl.getFilteredTires, {
-                filteredData: data,
+                filteredData: this.filter.filteredData,
                 page: this.paginator.page
             })
-            .then(response => {
-                console.log(data)
-                console.log(response.data)
-                this.filter.filteredItems = response.data.items
-            })
+                .then(response => {
+                    this.filter.filteredItems = response.data.items
+                    this.paginator = response.data.paginator
+                })
         }
     }
 }
