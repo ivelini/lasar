@@ -49,4 +49,15 @@ abstract class CoreRepository
         return $attribute;
 
     }
+
+    public function getModelsByAttributesBuilder($attributes)
+    {
+        $builder = $this->startConditions();
+        foreach ($attributes as $key => $value) {
+            $builder = $builder->where($key, $value);
+        }
+
+
+        return $builder;
+    }
 }

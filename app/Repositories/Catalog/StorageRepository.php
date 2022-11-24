@@ -43,4 +43,16 @@ class StorageRepository extends CoreRepository
 
         return $attr;
     }
+
+    public function findModelByAttributes($attributes)
+    {
+        $model =  $this->startConditions();
+        foreach ($attributes as $key => $value ) {
+            $model = $model->where($key, $value);
+        }
+
+        $model = $model->first();
+
+        return $model;
+    }
 }

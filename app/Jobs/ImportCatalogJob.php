@@ -10,7 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use App\Services\ImportDataCatalogService;
+use App\Services\ImportCatalogService\ImportXlsxFile;
 
 class ImportCatalogJob implements ShouldQueue
 {
@@ -37,11 +37,11 @@ class ImportCatalogJob implements ShouldQueue
      */
     public function handle()
     {
-        $importDataService = new ImportDataCatalogService($this->path);
-        $importDataService->setSelectedKeysHeader($this->selectedKeysHeader);
+        $importXlsx = new ImportXlsxFile($this->path);
+        $importXlsx->setSelectedKeysHeader($this->selectedKeysHeader);
 
         try {
-            $importDataService->import();
+            $importXlsx->import();
         }catch (\Exception $e) {
             $updateCatalogRepository = new UpdateCatalogRepository();
             $updateCatalogModel = $updateCatalogRepository->getLastModel('tires');

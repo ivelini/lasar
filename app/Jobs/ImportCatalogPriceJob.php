@@ -4,7 +4,7 @@ namespace App\Jobs;
 
 use App\Helpers\DbHelper;
 use App\Repositories\Catalog\UpdateCatalogRepository;
-use App\Services\ImportDataCatalogService;
+use App\Services\ImportCatalogService\ImportXlsxFile;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -37,11 +37,11 @@ class ImportCatalogPriceJob implements ShouldQueue
      */
     public function handle()
     {
-        $importDataService = new ImportDataCatalogService($this->path);
-        $importDataService->setSelectedKeysHeader($this->selectedKeysHeader);
+        $importXlsx = new ImportXlsxFile($this->path);
+        $importXlsx->setSelectedKeysHeader($this->selectedKeysHeader);
 
         try {
-            $importDataService->importPrice();
+            $importXlsx->importPrice();
         }catch (\Exception $e) {
             $updateCatalogRepository = new UpdateCatalogRepository();
             $updateCatalogModel = $updateCatalogRepository->getLastModel('tires_price');

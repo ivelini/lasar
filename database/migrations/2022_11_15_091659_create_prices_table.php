@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('prices', function (Blueprint $table) {
             $table->id();
+            $table->string('label');
             $table->foreignId('storage_id')->constrained('storages')->cascadeOnUpdate()->cascadeOnDelete();
             $table->bigInteger('priceable_id');
             $table->string('priceable_type');

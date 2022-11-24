@@ -5,13 +5,17 @@ namespace App\Http\Controllers\Api\Backend\Catalog;
 use App\Helpers\DbHelper;
 use App\Http\Controllers\Controller;
 use App\Jobs\ImportCatalogPriceJob;
-use App\Repositories\Catalog\PricesRepository;
 use App\Repositories\Catalog\SettingsCatalogepository;
-use App\Repositories\Catalog\TiresRepository;
 use App\Repositories\Catalog\UpdateCatalogRepository;
+use App\Services\ImportCatalogService\ImportXlsxFile;
+use App\Services\ImportCatalogService\Sallers\ImportXmlForTochki;
+use App\Services\ImportCatalogService\Sallers\ImportXmlShininvest;
+use App\Services\ImportCatalogService\Sallers\ImportXmlShinservice;
+use App\Services\ImportCatalogService\Sallers\ImportXmlSvrauto;
+use App\Services\ImportCatalogService\Sallers\ImportXmlTochkamarket;
+use App\Services\ImportCatalogService\Sallers\ImportXmlBrinex;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Services\ImportDataCatalogService;
 use App\Jobs\ImportCatalogJob;
 
 
@@ -24,8 +28,8 @@ class ImportDataController extends Controller
         $fileNAme = 'UserName_' . rand(1000, 10000) . '.xlsx';
         $path = Storage::putFileAs('tmp', $request->file('fileData'), $fileNAme);
 
-        $importDataService = new ImportDataCatalogService($path);
-        $keysHeader = $importDataService->getKyesHeaderFromDataFile();
+        $importXlsx = new ImportXlsxFile($path);
+        $keysHeader = $importXlsx->getKyesHeaderFromDataFile();
 
         $dbHelperUpdateCatalog->save(['type' => $request->input('type'), 'upload_file_path' => $path]);
 
@@ -58,22 +62,15 @@ class ImportDataController extends Controller
 
     public function test(Request $request)
     {
-        $data = $request->query();
-//        $data = [
-//            'price.min'     => 10,
-//            'price.max'     => 20,
-//            'vendorId'  => 28,
-//            'modelId'   => 727,
-//            'seasonId'  => 1,
-//            'width'     => 175,
-//            'height'    => 65,
-//            'diameter'  => 14,
-//            'isSpikes'  => 1,
-//        ];
 
-        $tires = (new PricesRepository)->getPaginationByFilterData($data, 20);
+        $selectedKeysHeader =collect(json_decode($request->input('filter')));
 
-        dd($tires);
+        $importXml = new ImportXmlBrinex('tmp\xml\brinex.xml');
+//        $importXml = new ImportXmlShinservice('tmp\xml\shinservice-b2b-27.xml');
+
+//        $importXlsx->setSelectedKeysHeader($selectedKeysHeader);
+//        $importXlsx->importPrice();
+        $importXml->importPrice();
     }
 
     public function getUploadStatus(Request $request): array
