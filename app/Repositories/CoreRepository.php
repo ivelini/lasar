@@ -60,4 +60,25 @@ abstract class CoreRepository
 
         return $builder;
     }
+
+    public function getAllModelsByAttributes(...$attributes)
+    {
+        $models = $this->startConditions();
+        foreach ($attributes as $key) {
+            $models = $models->addSelect($key);
+        }
+
+        $models = $models->get();
+
+        return $models;
+    }
+
+    public function getModel($id)
+    {
+        $model = $this->startConditions()
+            ->where('id', $id)
+            ->first();
+
+        return $model;
+    }
 }

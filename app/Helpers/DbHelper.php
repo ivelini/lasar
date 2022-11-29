@@ -10,12 +10,13 @@ class DbHelper
 {
     private $model;
 
-    public function __construct($modelVsModelName)
+
+    public function __construct($modelVsModelName = 'User')
     {
-        $this->model = $this->checkModelVsModelName($modelVsModelName);
+        $this->setModel($modelVsModelName);
     }
 
-    private function checkModelVsModelName($modelVsModelName)
+    public function setModel($modelVsModelName)
     {
         $model = $modelVsModelName;
 
@@ -25,7 +26,13 @@ class DbHelper
             $model = new $modelClass();
         }
 
-        return $model;
+        $this->model =  $model;
+    }
+
+    public function updateRelation(string $relationName, array $data)
+    {
+
+        dd($this->model->$relationName(), $this->model);
     }
 
     public function save(array $data)
@@ -37,21 +44,19 @@ class DbHelper
     {
         $dataAll = collect($dataAll);
         $dataAll->each(function ($item) {
-            $this->save($item);
+            $this->model->save($item);
         });
 
         return true;
     }
 
-    public function update($model, array $data)
+    public function update(array $data)
     {
         foreach($data as $key => $value) {
-            $model->$key = $value;
+            $this->model->$key = $value;
         }
 
-        $model->save();
-
-        return true;
+        return $this->model->save();
     }
 
 

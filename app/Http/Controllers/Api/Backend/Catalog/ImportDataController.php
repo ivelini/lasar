@@ -4,7 +4,12 @@ namespace App\Http\Controllers\Api\Backend\Catalog;
 
 use App\Helpers\DbHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\SallersSyncApiFileResource;
 use App\Jobs\ImportCatalogPriceJob;
+use App\Repositories\Catalog\ApiUrlSallersRepository;
+use App\Repositories\Catalog\LabelImportServiceRepository;
+use App\Repositories\Catalog\SallersRepository;
+use App\Repositories\Catalog\SallersSyncApiFileRepository;
 use App\Repositories\Catalog\SettingsCatalogepository;
 use App\Repositories\Catalog\UpdateCatalogRepository;
 use App\Services\ImportCatalogService\ImportXlsxFile;
@@ -15,6 +20,7 @@ use App\Services\ImportCatalogService\Sallers\ImportXmlSvrauto;
 use App\Services\ImportCatalogService\Sallers\ImportXmlTochkamarket;
 use App\Services\ImportCatalogService\Sallers\ImportXmlBrinex;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
 use App\Jobs\ImportCatalogJob;
 
@@ -62,15 +68,17 @@ class ImportDataController extends Controller
 
     public function test(Request $request)
     {
+        $apiUrlSallersRepository = new ApiUrlSallersRepository();
+        $urls = $apiUrlSallersRepository->getAllForTableUpdatePrice();
+        dd($urls);
+//        $selectedKeysHeader =collect(json_decode($request->input('filter')));
 
-        $selectedKeysHeader =collect(json_decode($request->input('filter')));
-
-        $importXml = new ImportXmlBrinex('tmp\xml\brinex.xml');
-//        $importXml = new ImportXmlShinservice('tmp\xml\shinservice-b2b-27.xml');
-
-//        $importXlsx->setSelectedKeysHeader($selectedKeysHeader);
-//        $importXlsx->importPrice();
-        $importXml->importPrice();
+//        (new ImportXmlBrinex('tmp\xml\brinex.xml'))->importPrice();
+//        (new ImportXmlShinservice('tmp\xml\shinservice-b2b-27.xml'))->importPrice();
+//        (new ImportXmlForTochki('tmp\xml\4tochki.xml'))->importPrice();
+//        (new ImportXmlShininvest('tmp\xml\shininvest.xml'))->importPrice();
+//        (new ImportXmlSvrauto('tmp\xml\svrauto.xml'))->importPrice();
+//        (new ImportXmlTochkamarket('tmp\xml\tochkamarket-chel.xml', 'Челябинск'))->importPrice();
     }
 
     public function getUploadStatus(Request $request): array

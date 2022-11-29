@@ -33,4 +33,15 @@ class SallersRepository extends CoreRepository
 
         return $id;
     }
+
+    public function getSallersForSelectUrl()
+    {
+        $models = $this->getAllModelsByAttributes('id', 'name');
+        $items = $this->modelsAttributesToArray($models);
+        foreach ($items as $key => $item) {
+            if ($item['name'] == 'Global') unset($items[$key]);
+        }
+
+        return $items;
+    }
 }

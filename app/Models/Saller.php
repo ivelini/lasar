@@ -10,5 +10,8 @@ class Saller extends Model
     use HasFactory;
     protected $guarded = [];
 
-
+    public function apiUrlsSaller()
+    {
+        return $this->hasMany(ApiUrlSaller::class, 'saller_id', 'id');
+    }
 }

@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('storages', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('api_url_saller_id')->constrained('api_url_sallers')->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('name');
             $table->integer('value')->nullable();
             $table->timestamps();

@@ -26,3 +26,5 @@ Route::get('/catalog/import/test', [\App\Http\Controllers\Api\Backend\Catalog\Im
 
 Route::get('/catalog/filter-keys', [\App\Http\Controllers\Api\Backend\Catalog\FilterTiresController::class, 'getFilteredData']);
 Route::post('/catalog/filtered-tires', [\App\Http\Controllers\Api\Backend\Catalog\FilterTiresController::class, 'getFilteredTires']);
+Route::get('/catalog/import-price-xml', [\App\Http\Controllers\Api\Backend\Catalog\Pages\ImportPriceXmlController::class, 'index']);
+Route::post('/catalog/import-price-xml', [\App\Http\Controllers\Api\Backend\Catalog\Pages\ImportPriceXmlController::class, 'update']);
