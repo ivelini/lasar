@@ -16,7 +16,6 @@ return new class extends Migration
         Schema::create('update_catalog', function (Blueprint $table) {
             $table->id();
             $table->string('type');
-            $table->string('upload_file_path');
             $table->boolean('is_job_created')->nullable()->default(null);
             $table->boolean('is_catalog_updated')->nullable()->default(null);
             $table->longText('error')->nullable()->default(null);

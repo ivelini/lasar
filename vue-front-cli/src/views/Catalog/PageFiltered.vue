@@ -5,8 +5,7 @@
             <div data-v-74ca2ebb="" class="row grid-4 gap-20">
                 <div data-v-74ca2ebb="" class="col-1">
                     <filter-section
-                        :filtered-data="filter.filteredParams"
-                        @send-filtered-key="getFilteredItems($event)">
+                        :filtered-data="filter.filteredParams">
                         Найти шины
                     </filter-section>
                 </div>
@@ -89,8 +88,8 @@ export default {
     data() {
         return {
             apiUrl: {
-                getFilteredParams: 'http://lasar/api/catalog/filter-keys',
-                getFilteredTires: 'http://lasar/api/catalog/filtered-tires',
+                getFilteredParams: 'http://lasar/api/podbor/shini/filtered-params',
+                getFilteredTires: 'http://lasar/api/podbor/shini',
             },
             filter: {
                 filteredParams: {},
@@ -104,37 +103,52 @@ export default {
         }
     },
     mounted() {
+        // if (this.paramsToString().length === 0) this.$router.push({ name: 'main' });
         this.getFilteredData()
+        this.getItems()
+    },
+    beforeRouteUpdate(to, from, next) {
+        let query = to.query;
+        let queryKeys = Object.keys(query);
+        let queryString = '';
+        queryKeys.forEach(key => {
+            queryString += '&' + key + '=' + query[key];
+        })
+        queryString = '?' + queryString.substring(1);
+
+        this.getItems(this.apiUrl.getFilteredTires + queryString)
+        next()
     },
     methods: {
+        paramsToString() {
+            return (new URL(window.location.href))
+                .searchParams
+                .toString();
+        },
         getFilteredData() {
             axios.get(this.apiUrl.getFilteredParams)
             .then(response => {
                 this.filter.filteredParams = response.data
             })
             .catch(error => {
-                console.log('error: ', error)
+                console.log('error: ', error.data)
             })
         },
-        getFilteredItems(data) {
-            this.filter.filteredData = data
-            this.sendGetItems()
+        getItems(url = null) {
+            url = (url == null) ?
+                this.apiUrl.getFilteredTires + '?' + this.paramsToString() :
+                url;
 
-        },
-        clickPaginator(page) {
-            this.paginator.page = page
-            this.sendGetItems()
-        },
-        sendGetItems() {
-            axios.post(this.apiUrl.getFilteredTires, {
-                filteredData: this.filter.filteredData,
-                page: this.paginator.page
-            })
+            axios.get(url)
                 .then(response => {
+                    console.log(response.data)
                     this.filter.filteredItems = response.data.items
                     this.paginator = response.data.paginator
                 })
-        }
+        },
+        clickPaginator(page) {
+            this.getItems()
+        },
     }
 }
 </script>

@@ -21,7 +21,7 @@ class UpdateCatalogRepository extends CoreRepository
 
     public function getPathLastModel($type)
     {
-        $path = $this->getLastModel($type)->upload_file_path;
+        $path = $this->getLastModel($type)->file->path;
 
         return $path;
     }

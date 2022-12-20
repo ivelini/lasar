@@ -11,11 +11,12 @@
         </td>
         <td>
             <div class="list-icons">
+                <div class="loading-spinner"></div>
                 <a @click="update()" class="list-icons-item text-primary" title="Обновить остатки" style="cursor: pointer">
                     <i class="icon-database-refresh" style="font-size: 1.5rem;padding-left: 20px"></i>
                 </a>
 
-                <a href="#" class="list-icons-item text-teal" title="Ненайденные остатки">
+                <a @click="download()" class="list-icons-item text-teal" title="Ненайденные остатки" style="cursor: pointer">
                     <i class="icon-file-minus2" style="font-size: 1.5rem;padding-left: 20px"></i>
                 </a>
                 <a @click="del()" class="list-icons-item text-danger" title="Удалить ссылку" style="cursor: pointer">
@@ -27,6 +28,8 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
     emits: ['deleteUrl', 'updatePrice'],
    props: {
@@ -50,6 +53,10 @@ export default {
            type: String,
            required: true
        },
+       labelName: {
+           type: String,
+           required: true
+       },
    },
     methods: {
         del() {
@@ -57,6 +64,20 @@ export default {
         },
         update() {
             this.$emit('updatePrice', this.urlId);
+        },
+        download() {
+            let fileName = '' + this.labelName + '' + this.storage + '.csv';
+
+            axios.get('http://lasar/api/catalog/import-price-xml/get-file?fileName=' + fileName, { responseType: 'blob' })
+                .then((response) => {
+                    const url = window.URL.createObjectURL(new Blob([response.data]));
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', fileName); //or any other extension
+                    document.body.appendChild(link);
+                    link.click();
+                })
+                .catch(err => console.log(err))
         }
     }
 }

@@ -11,4 +11,9 @@ class UpdateCatalog extends Model
 
     protected $table = 'update_catalog';
     protected $guarded = [];
+
+    public function file()
+    {
+        return $this->morphOne(File::class, 'fileable');
+    }
 }

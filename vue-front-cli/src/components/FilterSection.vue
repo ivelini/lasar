@@ -35,7 +35,6 @@ export default {
     components: {
         FilterInput
     },
-    emits: ['sendFilteredKey'],
     props: {
         filteredData: {
             type: Object,
@@ -60,7 +59,10 @@ export default {
             if (key in this.selectedData) delete this.selectedData[key]
         },
         sendKey() {
-            this.$emit('sendFilteredKey', this.selectedData)
+            if (Object.keys(this.selectedData).length > 0) {
+                this.$router.push({name: 'filteredTires', query: this.selectedData});
+            }
+
         },
         transliteNameInputs() {
             return {

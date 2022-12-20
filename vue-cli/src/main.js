@@ -6,6 +6,7 @@ import store from './store'
 import './assets/global_assets/css/icons/icomoon/styles.min.css'
 import './assets/css/all.min.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import './assets/css/custom.css'
 
 createApp(App)
     .use(router)

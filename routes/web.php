@@ -16,4 +16,3 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/catalog/import', [\App\Http\Controllers\Api\Backend\Catalog\ImportDataController::class, 'importTest']);

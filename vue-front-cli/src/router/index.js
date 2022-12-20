@@ -18,7 +18,7 @@ const routes = [
     },
     {
         name:'filteredTires',
-        path: '/filter',
+        path: '/podbor/shini',
         component: PageFiltered
     },
     {

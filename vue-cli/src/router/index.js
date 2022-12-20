@@ -2,29 +2,53 @@ import { createRouter, createWebHistory } from "vue-router";
 import ImportCatalog from "@/views/ImportCatalog";
 import PageDashboard from "@/views/PageDashboard";
 import PageError404 from "@/views/PageError404";
-import UpdatePrice from "@/views/UpdatePrice";
+import PageStorages from "@/views/PageStorages";
+import PageIndex from "@/views/PageIndex";
+import PageCategory from "@/views/PageCategory";
+import PageAdd from "@/views/PageAdd";
+import PageEdit from "@/views/PageEdit";
 import UpdatePriceXml from "@/views/UpdatePriceXml";
 
 const routes = [
     {
-        name: 'dashboard',
         path: '/',
-        component: PageDashboard
+        component: PageDashboard,
+        name: 'dashboard',
     },
     {
-        name: 'importCatalog',
         path: '/catalog/import-data',
-        component: ImportCatalog
+        component: ImportCatalog,
+        name: 'importCatalog',
     },
     {
-        name: 'updatePrice',
         path: '/catalog/import-price',
-        component: UpdatePrice
+        component: UpdatePriceXml,
+        name: 'updatePriceXml',
     },
     {
-        name: 'updatePriceXml',
-        path: '/catalog/import-price-xml',
-        component: UpdatePriceXml
+        path: '/catalog/storages',
+        component: PageStorages,
+        name: 'pageStorages',
+    },
+    {
+        path: '/page/index',
+        component: PageIndex,
+        name: 'pageIndex',
+    },
+    {
+        path: '/page/add',
+        component: PageAdd,
+        name: 'pageAdd',
+    },
+    {
+        path: '/page/:page_id',
+        component: PageEdit,
+        name: 'pageEdit',
+    },
+    {
+        path: '/page/category',
+        component: PageCategory,
+        name: 'pageCategory',
     },
     {
         path: '/:any(.*)',

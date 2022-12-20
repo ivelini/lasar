@@ -25,13 +25,15 @@ class ApiUrlSallersRepository extends CoreRepository
             ->get();
 
         $items = $models->map(function ($itemUrl) {
+
             return [
                 'urlId' => $itemUrl->id,
                 'sallerName' => $itemUrl->saller->name,
                 'url' => $itemUrl->url,
-                'storage' => $itemUrl->storage != null ? $itemUrl->storage->name : null,
+                'storage' => $itemUrl->storage != null && $itemUrl->storage->is_manual == 1 ? $itemUrl->storage->name : null,
                 'labelId' => $itemUrl->label->id,
                 'labelTitle' => $itemUrl->label->title,
+                'labelName' => $itemUrl->label->name,
 
             ];
         });

@@ -30,6 +30,11 @@ abstract class RootImportCatalog
     protected int $rowAll = 0;
     protected int $iStart = 0;
 
+    protected $apiUrlSallerId;
+    //Метка в таблице prices с названием класса чтоб знать, какие данные удалить из таблицы при обновлении
+    protected $label;
+    protected $skladName = null;
+
     private $vendorRepository;
     private $modelPositionRepository;
     private $seasonRepository;
@@ -101,8 +106,10 @@ abstract class RootImportCatalog
 
         $updateCatalogRepository = new UpdateCatalogRepository();
         $updateCatalogModel = $updateCatalogRepository->getLastModel('tires');
-        $dbHelperUpdateCatalog = new DbHelper('UpdateCatalog');
-        $dbHelperUpdateCatalog->update($updateCatalogModel, ['is_catalog_updated' => true]);
+
+        $dbHelper = new DbHelper();
+        $dbHelper->setModel($updateCatalogModel)
+            ->update(['is_catalog_updated' => true]);
 
         return true;
     }
@@ -112,13 +119,7 @@ abstract class RootImportCatalog
         $this->importStoragesTable('storage');
         $this->importPricesTable('title', 'num', 'code', 'storage', 'price', 'count', 'label');
 
-        $updateCatalogRepository = new UpdateCatalogRepository();
-        $updateCatalogModel = $updateCatalogRepository->getLastModel('tires_price');
-        $dbHelperUpdateCatalog = new DbHelper('UpdateCatalog');
-        $dbHelperUpdateCatalog->update($updateCatalogModel, ['is_catalog_updated' => true]);
-
         return true;
-
     }
 
     private function importVendorsTable(...$targetKeys): bool
@@ -331,7 +332,7 @@ abstract class RootImportCatalog
 
         $dataAll->each(function ($item) use($dbHelperVendorTable) {
             $itemModel = $this->storageRepository->findModelByAttributes($item);
-
+            $item['api_url_saller_id'] = $this->apiUrlSallerId;
             if(empty($itemModel)) $dbHelperVendorTable->save($item);
         });
 
@@ -389,7 +390,7 @@ abstract class RootImportCatalog
             }
         }
 
-        $fileCsv = fopen(Storage::disk('local')->path('tmp\tireNotFound.csv'), 'a');
+        $fileCsv = fopen(Storage::disk('local')->path('tmp\\' . $this->label . '' . $this->skladName . '.csv'), 'wb');
 
         foreach ($tiresNotFound as $row) {
             fputcsv($fileCsv, $row);

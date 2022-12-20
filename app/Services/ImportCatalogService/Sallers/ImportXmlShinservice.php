@@ -8,8 +8,10 @@ use App\Services\ImportCatalogService\ImportXml;
 
 class ImportXmlShinservice extends ImportXml
 {
-    public function __construct($path)
+    public function __construct($path, $skladName, $apiUrlSallerId)
     {
+        $this->skladName = $skladName;
+        $this->apiUrlSallerId = $apiUrlSallerId;
         parent::__construct($path);
     }
 
@@ -42,7 +44,7 @@ class ImportXmlShinservice extends ImportXml
                             'code' => $item->get('sku')->__toString(),
                             'count' => $item->get('stock')->__toString(),
                             'price' => $item->get('retail_price')->__toString(),
-                            'storage' => $storageName,
+                            'storage' => !empty($this->skladName) ? $this->skladName : $storageName,
                             'label' => $this->label
                         ]);
                     }

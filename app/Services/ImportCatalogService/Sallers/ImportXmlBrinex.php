@@ -8,8 +8,10 @@ use App\Services\ImportCatalogService\ImportXml;
 
 class ImportXmlBrinex extends ImportXml
 {
-    public function __construct($path)
+    public function __construct($path, $skladName, $apiUrlSallerId)
     {
+        $this->skladName = $skladName;
+        $this->apiUrlSallerId = $apiUrlSallerId;
         parent::__construct($path);
     }
 
@@ -26,7 +28,7 @@ class ImportXmlBrinex extends ImportXml
                         'code' => $item->get('vendor_code')->__toString(),
                         'count' => $item->get('stockQuantity')->__toString(),
                         'price' => $item->get('price')->__toString(),
-                        'storage' => $item->get('stockName')->__toString(),
+                        'storage' => !empty($this->skladName) ? $this->skladName : $item->get('stockName')->__toString(),
                         'label' => $this->label
                     ]);
                 }

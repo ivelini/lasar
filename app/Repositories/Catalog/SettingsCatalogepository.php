@@ -18,7 +18,7 @@ class SettingsCatalogepository extends CoreRepository
         return Model::class;
     }
 
-    public static function getModel($action, $type)
+    public static function getModelSettingsCatalog($action, $type)
     {
         $model = (new SettingsCatalogepository)->startConditions()
             ->where('action', $action)

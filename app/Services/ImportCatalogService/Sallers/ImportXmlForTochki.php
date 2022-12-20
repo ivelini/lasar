@@ -8,8 +8,10 @@ use App\Services\ImportCatalogService\ImportXml;
 
 class ImportXmlForTochki extends ImportXml
 {
-    public function __construct($path)
+    public function __construct($path, $skladName, $apiUrlSallerId)
     {
+        $this->skladName = $skladName;
+        $this->apiUrlSallerId = $apiUrlSallerId;
         parent::__construct($path);
     }
 
@@ -41,7 +43,7 @@ class ImportXmlForTochki extends ImportXml
                             'code' => null,
                             'count' => mb_substr($itemOneStorage->get('rest_' . $storage), -2),
                             'price' => $itemOneStorage->get('price_' . $storage . '_rozn'),
-                            'storage' => 'rest_' . $storage,
+                            'storage' => !empty($this->skladName) ? $this->skladName : 'rest_' . $storage,
                             'label' => $this->label
                         ]);
                     }

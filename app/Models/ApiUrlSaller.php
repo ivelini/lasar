@@ -25,4 +25,9 @@ class ApiUrlSaller extends Model
     {
         return $this->belongsTo(LabelImportCatalogService::class, 'label_id', 'id');
     }
+
+    public function file()
+    {
+        return $this->morphOne(File::class, 'fileable');
+    }
 }

@@ -21,16 +21,16 @@ class PricesRepository extends CoreRepository
 
     public function getPaginationByFilterData($data, $paginate = 20)
     {
-//        $data = [
+        $data = [
 //            'price'     => ['min' => 0, 'max' => 3200],
-//            'vendorId'  => 28,
+            'vendorId'  => 4,
 //            'modelId'   => 727,
 //            'seasonId'  => 1,
-//            'width'     => 1,
-//            'height'    => 1,
-//            'diameter'  => 1,
+            'width'     => 185,
+            'height'    => 55,
+            'diameter'  => 16,
 //            'isSpikes'  => 1,
-//        ];
+        ];
 
         $paginator = $this->startConditions();
 
@@ -64,63 +64,80 @@ class PricesRepository extends CoreRepository
                 }
             )
             ->with('priceable.tire.modelPosition.vendor', 'priceable.saller', 'storage')
-            ->paginate($paginate);
+            ->get()
+            ->unique(function ($item) {
+                return $item->priceable->tire->id;
+            });
 
+        if ($paginator->count() > 0) {
 
-        $tires = collect($paginator->items())->map(function ($price) {
-            $data['id'] = $price->priceable->tire->id;
+            $paginatorChunk = $paginator->chunk($paginate);
 
-            $data['title'] = 'Шина ' .
-                $price->priceable->tire->modelPosition->name . ' ' .
-                $price->priceable->tire->width . '/' .
-                $price->priceable->tire->height . ' R' .
-                $price->priceable->tire->diameter;
+            $currentPage = (!empty($_GET['page']) && $_GET['page'] < $paginatorChunk->count()) ? $_GET['page'] : 1;
+
+            $customPaginator = new \Illuminate\Pagination\LengthAwarePaginator($paginatorChunk[$currentPage - 1], $paginator->count(), $paginate);
+
+            $tires = collect($customPaginator->items())->map(function ($price) {
+                $data['id'] = $price->priceable->tire->id;
+
+                $data['title'] = 'Шина ' .
+                    $price->priceable->tire->modelPosition->name . ' ' .
+                    $price->priceable->tire->width . '/' .
+                    $price->priceable->tire->height . ' R' .
+                    $price->priceable->tire->diameter;
                 if(!empty($price->priceable->tire->index_speed)) $data['title'] .= ' ' . $price->priceable->tire->index_speed;
 
-            $data['num'] = $price->priceable->tire->num;
-            $data['price'] = number_format(rtrim(rtrim($price->price, '0'), '.'), 0, '', ' ');
-            $data['storage'] = $price->storage->name;
-            $data['storage_vol'] = $price->storage->volume;
-            $data['count'] = $price->count;
-            $data['vendor'] = $price->priceable->tire->modelPosition->vendor->name;
-            $data['model'] = $price->priceable->tire->modelPosition->name;
-            $data['isSpikes'] = $price->priceable->tire->is_spikes;
+                $data['num'] = $price->priceable->tire->num;
+                $data['price'] = number_format(rtrim(rtrim($price->price, '0'), '.'), 0, '', ' ');
+                $data['storage'] = $price->storage->name;
+                $data['storage_vol'] = $price->storage->value;
+                $data['count'] = $price->count;
+                $data['vendor'] = $price->priceable->tire->modelPosition->vendor->name;
+                $data['model'] = $price->priceable->tire->modelPosition->name;
+                $data['isSpikes'] = $price->priceable->tire->is_spikes;
 
-            return $data;
-        });
+                return $data;
+            });
 
-        $paginatePage['paginator']['title'] = 'Шины';
+            $paginatePage['paginator']['title'] = 'Шины';
 
-        if (array_key_exists('seasonId', $data)) {
-            $paginatePage['paginator']['title'] .= ' ' . (new SeasonRepository())->getAttributeById('name', $data['seasonId']);
+            if (array_key_exists('seasonId', $data)) {
+                $paginatePage['paginator']['title'] .= ' ' . (new SeasonRepository())->getAttributeById('name', $data['seasonId']);
+            }
+
+            if (array_key_exists('isSpikes', $data)) {
+                $paginatePage['paginator']['title'] .= ($data['isSpikes']) ? ' шипованные' :  ' нешипованные';
+            }
+
+            if (array_key_exists('vendorId', $data)) {
+                $paginatePage['paginator']['title'] .= ' ' . (new VendorRepository)->getAttributeById('name', $data['vendorId']);
+            }
+
+            if (array_key_exists('width', $data)) {
+                $paginatePage['paginator']['title'] .= ' ' . $data['width'];
+            }
+
+            if (array_key_exists('height', $data)) {
+                $paginatePage['paginator']['title'] .= (array_key_exists('width', $data)) ? '/' . $data['height'] : ' ' . $data['height'];
+            }
+
+            if (array_key_exists('diameter', $data)) {
+                $paginatePage['paginator']['title'] .= ' R' . $data['diameter'];
+            }
+
+
+
+            $paginatePage['items'] = $tires->all();
+            $paginatePage['paginator']['current_page'] = $customPaginator->currentPage();
+            $paginatePage['paginator']['last_page'] = $customPaginator->lastPage();
+            $paginatePage['paginator']['total_items'] = $paginator->count();
+
+        } else {
+            $paginatePage['items'] = 0;
+            $paginatePage['paginator']['current_page'] = 1;
+            $paginatePage['paginator']['last_page'] = 1;
+            $paginatePage['paginator']['total_items'] = 0;
         }
-
-        if (array_key_exists('isSpikes', $data)) {
-            $paginatePage['paginator']['title'] .= ($data['isSpikes']) ? ' шипованные' :  ' нешипованные';
-        }
-
-        if (array_key_exists('vendorId', $data)) {
-            $paginatePage['paginator']['title'] .= ' ' . (new VendorRepository)->getAttributeById('name', $data['vendorId']);
-        }
-
-        if (array_key_exists('width', $data)) {
-            $paginatePage['paginator']['title'] .= ' ' . $data['width'];
-        }
-
-        if (array_key_exists('height', $data)) {
-            $paginatePage['paginator']['title'] .= (array_key_exists('width', $data)) ? '/' . $data['height'] : ' ' . $data['height'];
-        }
-
-        if (array_key_exists('diameter', $data)) {
-            $paginatePage['paginator']['title'] .= ' R' . $data['diameter'];
-        }
-
-
-
-        $paginatePage['items'] = $tires->all();
-        $paginatePage['paginator']['current_page'] = $paginator->currentPage();
-        $paginatePage['paginator']['last_page'] = $paginator->lastPage();
-        $paginatePage['paginator']['total_items'] = $paginator->total();
 
         return $paginatePage;
     }

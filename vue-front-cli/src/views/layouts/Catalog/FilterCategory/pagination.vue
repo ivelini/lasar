@@ -4,10 +4,10 @@
             <li v-for="(item, key) in arr" :key="key"
                 data-v-28573630="">
                 <a data-v-28573630=""
-                   :href="'?page=' + item"
+                   :href="setUrl(item)"
                    aria-current="page"
                    :class="{'active': item == current_page ? true : false}"
-                   @click.prevent="clickPage(item)"
+                    @click.prevent="clickLink(item)"
                 >
                     {{ item }}
                 </a>
@@ -48,8 +48,24 @@ export default {
         this.current = this.current_page;
     },
     methods: {
-        clickPage(item) {
-            this.$emit('clickPage' , item)
+        setUrl(item) {
+            let href = window.location.href;
+
+            return  (href.indexOf('&page=') > 0) ?
+                href.substring(0, href.indexOf('&page=')) + '&page=' + item :
+                href + '&page=' + item;
+        },
+        clickLink(item) {
+            let searchParams = (new URL(window.location.href)).searchParams;
+            let query = {};
+
+            searchParams.forEach((val, key) => {
+                query[key] = val;
+            })
+
+            query.page = item;
+
+            this.$router.push({name: 'filteredTires', query: query });
         }
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Backend\Catalog;
+namespace App\Http\Controllers\Api\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\Catalog\PricesRepository;
@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 
 class FilterTiresController extends Controller
 {
-    public function getFilteredData()
+    public function getFilteredParams(): string
     {
         $tiresRepository = new TiresRepository();
 
@@ -30,7 +30,9 @@ class FilterTiresController extends Controller
 
     public function getFilteredTires(Request $request)
     {
-        $data = $request->input('filteredData');
+        $data = $request->query();
+
+        logger($data);
 
         $paginatePage = (new PricesRepository)->getPaginationByFilterData($data);
 

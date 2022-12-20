@@ -8,10 +8,10 @@ use App\Services\ImportCatalogService\ImportXml;
 
 class ImportXmlTochkamarket extends ImportXml
 {
-    private $skladName;
-    public function __construct($path, $skladName)
+    public function __construct($path, $skladName, $apiUrlSallerId)
     {
         $this->skladName = $skladName;
+        $this->apiUrlSallerId = $apiUrlSallerId;
         parent::__construct($path);
     }
 
@@ -27,15 +27,17 @@ class ImportXmlTochkamarket extends ImportXml
                     'title' => $itemsXml->get('name')->__toString(),
                     'count' => $itemsXml->get('quantity')->__toString(),
                     'price' => $itemsXml->get('mrc_price')->__toString(),
-                    'storage' => $this->skladName,
+                    'storage' => !empty($this->skladName) ? $this->skladName : 'Склад не установлен',
                     'label' => $this->label,
                 ];
 
 
                 $itemsXmlProperties = collect($itemsXml->get('properties'));
 
+
                 $arr['num'] = $itemsXmlProperties->get('RIMEX_TRADES_CODE')->__toString();
-                $arr['code'] = $itemsXmlProperties->get('PRODUCER_TRADES_CODE')->__toString();
+                $arr['code'] = !empty($itemsXmlProperties->get('PRODUCER_TRADES_CODE')) ?
+                    $itemsXmlProperties->get('PRODUCER_TRADES_CODE')->__toString() : null;
 
                 $items->push($arr);
             }

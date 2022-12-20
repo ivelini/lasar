@@ -8,8 +8,10 @@ use App\Services\ImportCatalogService\ImportXml;
 
 class ImportXmlSvrauto extends ImportXml
 {
-    public function __construct($path)
+    public function __construct($path, $skladName, $apiUrlSallerId)
     {
+        $this->skladName = $skladName;
+        $this->apiUrlSallerId = $apiUrlSallerId;
         parent::__construct($path);
     }
 
@@ -29,7 +31,7 @@ class ImportXmlSvrauto extends ImportXml
                         'code' => $item->get('SMNFCODE'),
                         'count' => $item->get('NREST'),
                         'price' => $item->get('NPRICE_RRP'),
-                        'storage' => $item->get('TERRITORY_NAME'),
+                        'storage' => !empty($this->skladName) ? $this->skladName : $item->get('TERRITORY_NAME'),
                         'label' => $this->label
                     ]);
                 }

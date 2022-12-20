@@ -86,6 +86,7 @@
                             :url="item.url"
                             :storage="item.storage"
                             :label-title="item.labelTitle"
+                            :label-name="item.labelName"
                             @delete-url="delUrl($event)"
                             @update-price="updPrice($event)"/>
                         </tbody>
@@ -170,6 +171,7 @@ export default {
                 method: 'updPrice',
                 urlId: urlId
             }
+            console.log(urlId);
             this.send(data)
         },
         send(data) {

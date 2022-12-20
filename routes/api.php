@@ -14,17 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-//Route::post('/catalog/store', [\App\Http\Controllers\Api\Backend\Catalog\ImportDataController::class, 'store']);
-Route::post('/catalog/import/file', [\App\Http\Controllers\Api\Backend\Catalog\ImportDataController::class, 'uploadFile']);
-Route::post('/catalog/import/tire', [\App\Http\Controllers\Api\Backend\Catalog\ImportDataController::class, 'importTire']);
-Route::post('/catalog/import/price', [\App\Http\Controllers\Api\Backend\Catalog\ImportDataController::class, 'importPrice']);
-Route::post('/catalog/import/status', [\App\Http\Controllers\Api\Backend\Catalog\ImportDataController::class, 'getUploadStatus']);
-Route::get('/catalog/import/test', [\App\Http\Controllers\Api\Backend\Catalog\ImportDataController::class, 'test']);
+include_once "apiBackend.php";
+include_once "apiFrontend.php";
 
-Route::get('/catalog/filter-keys', [\App\Http\Controllers\Api\Backend\Catalog\FilterTiresController::class, 'getFilteredData']);
-Route::post('/catalog/filtered-tires', [\App\Http\Controllers\Api\Backend\Catalog\FilterTiresController::class, 'getFilteredTires']);
-Route::get('/catalog/import-price-xml', [\App\Http\Controllers\Api\Backend\Catalog\Pages\ImportPriceXmlController::class, 'index']);
-Route::post('/catalog/import-price-xml', [\App\Http\Controllers\Api\Backend\Catalog\Pages\ImportPriceXmlController::class, 'update']);
+Route::get('test', [\App\Http\Controllers\Test\testApiController::class, 'test']);

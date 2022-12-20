@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Api\Backend\Catalog\Pages;
 
+use App\Helpers\UploadFileHelper;
 use App\Http\Controllers\Controller;
+use App\Models\ApiUrlSaller;
 use App\Repositories\Catalog\ApiUrlSallersRepository;
 use App\Repositories\Catalog\LabelImportServiceRepository;
 use App\Repositories\Catalog\SallersRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ImportPriceXmlController extends Controller
 {
@@ -66,7 +69,10 @@ class ImportPriceXmlController extends Controller
 
         $storage = null;
         if(!empty($request->input('storage'))) {
-            $storage = $url->storage()->create(['name' => $request->input('storage')]);
+            $storage = $url->storage()->create([
+                'is_manual' => true,
+                'name' => $request->input('storage')
+            ]);
         }
 
         return ['saller' => $saller, 'url' => $url, 'storage' => $storage];
@@ -74,7 +80,30 @@ class ImportPriceXmlController extends Controller
 
     private function updatePrice($request)
     {
-        return ['update' => $request->input()];
+
+        $apiUrl = ApiUrlSaller::all()->find($request->input('urlId'));
+
+        $uploadFileHelper = new UploadFileHelper();
+
+        $path = $uploadFileHelper
+            ->setRelationModel($apiUrl)
+            ->setLink($apiUrl->url)
+            ->setPath('tmp\xml')
+            ->upload();
+
+        $importMethodName = 'App\Services\ImportCatalogService\Sallers\\' . $apiUrl->label->name;
+        $storage = !empty($apiUrl->storage) ? $apiUrl->storage->name : null ;
+
+        $importPriceMethod = new $importMethodName($path, $storage, $apiUrl->id);
+        $importPriceMethod->importPrice();
+
+        return ['update' => $request->input('urlId')];
+    }
+
+    public function download(Request $request)
+    {
+        return Storage::get('tmp/' . $request->query('fileName'));
+
     }
 
     private function delUrl($request)

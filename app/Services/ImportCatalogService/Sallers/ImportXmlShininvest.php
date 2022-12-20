@@ -8,8 +8,10 @@ use App\Services\ImportCatalogService\ImportXml;
 
 class ImportXmlShininvest extends ImportXml
 {
-    public function __construct($path)
+    public function __construct($path, $skladName, $apiUrlSallerId)
     {
+        $this->skladName = $skladName;
+        $this->apiUrlSallerId = $apiUrlSallerId;
         parent::__construct($path);
     }
 
@@ -27,7 +29,7 @@ class ImportXmlShininvest extends ImportXml
                 'code' => $item->get('producer_code'),
                 'count' => $item->get('quantity'),
                 'price' => $item->get('price_mic'),
-                'storage' => 'Головной',
+                'storage' => !empty($this->skladName) ? $this->skladName : 'Склад не установлен',
                 'label' => $this->label
             ]);
         }

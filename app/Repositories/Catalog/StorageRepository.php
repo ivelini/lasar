@@ -55,4 +55,21 @@ class StorageRepository extends CoreRepository
 
         return $model;
     }
+
+    public function getIndex()
+    {
+        $models = $this->startConditions()
+            ->with('apiUrlSaller.saller')
+            ->get();
+
+        $models->map(function ($item) {
+            $item->sallerName = $item->apiUrlSaller->saller->name;
+            $item->sallerId = $item->apiUrlSaller->saller->id;
+            return $item;
+        });
+
+        $items = $this->modelsAttributesToArray($models);
+
+        return $items;
+    }
 }

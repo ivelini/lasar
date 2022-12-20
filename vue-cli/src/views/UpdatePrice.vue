@@ -151,26 +151,28 @@ export default {
     },
     methods: {
         getCurrentStatusUploadCatalog() {
-            let inputs = [
-                { name: 'type', value: 'tires_price' }
-            ]
+            let type = 'tires_price'
 
-            let result = this.send('http://lasar/api/catalog/import/status', inputs)
+            let result = this.send('http://lasar/api/catalog/import/status?type=' + type, 'GET')
 
             return result;
 
         },
-        async send(api_url, inputs = [], method = 'POST') {
-            let oData = new FormData();
-
-            inputs.forEach(input => {
-                oData.append(input.name, input.value);
-            })
-
-            let response = await fetch(api_url, {
+        async send(api_url, method = 'POST', inputs = []) {
+            let data = {
                 method: method,
-                body: oData
-            });
+            }
+
+            if (inputs.length > 0 && method === 'POST') {
+                let oData = new FormData();
+                inputs.forEach(input => {
+                    oData.append(input.name, input.value);
+                })
+
+                data.body = oData;
+            }
+
+            let response = await fetch(api_url, data);
 
             let result = await response.json();
 

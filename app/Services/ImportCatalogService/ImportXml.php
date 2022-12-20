@@ -5,6 +5,7 @@ namespace App\Services\ImportCatalogService;
 
 use App\Helpers\DbHelper;
 use App\Repositories\Catalog\PricesRepository;
+use App\Repositories\Catalog\StorageRepository;
 use Illuminate\Support\Facades\Storage;
 use Orchestra\Parser\Xml\Facade as XmlParser;
 
@@ -14,8 +15,6 @@ use Orchestra\Parser\Xml\Facade as XmlParser;
 abstract class ImportXml extends RootImportCatalog
 {
     private $items;
-    //Метка в таблице prices с названием класса чтоб знать, какие данные удалить из таблицы при обновлении
-    protected $label;
 
     public function __construct($path)
     {
@@ -27,6 +26,8 @@ abstract class ImportXml extends RootImportCatalog
 
         $this->iStart = 0;
         $this->rowAll = $this->items->count() - 1;
+
+
     }
 
     /*
@@ -36,8 +37,16 @@ abstract class ImportXml extends RootImportCatalog
 
     protected function deletePriceItemsByLabel()
     {
+        $attributes = ['label' => $this->label];
+
+        if (!empty($this->skladName)) {
+            $storageId = (new StorageRepository)
+                ->getAttributeFromAttributeValue('name', $this->skladName, 'id');
+            $attributes['storage_id'] = $storageId;
+        }
+
         (new PricesRepository)
-            ->getModelsByAttributesBuilder(['label' => $this->label])
+            ->getModelsByAttributesBuilder($attributes)
             ->delete();
 
         return true;

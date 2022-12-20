@@ -45,8 +45,9 @@ class ImportCatalogJob implements ShouldQueue
         }catch (\Exception $e) {
             $updateCatalogRepository = new UpdateCatalogRepository();
             $updateCatalogModel = $updateCatalogRepository->getLastModel('tires');
-            $dbHelperUpdateCatalog = new DbHelper('UpdateCatalog');
-            $dbHelperUpdateCatalog->update($updateCatalogModel, ['error' => $e]);
+            $dbHelper = new DbHelper();
+            $dbHelper->setModel($updateCatalogModel)
+                ->update(['error' => $e]);
         }
     }
 }
