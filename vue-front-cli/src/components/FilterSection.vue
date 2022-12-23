@@ -39,17 +39,26 @@ export default {
         filteredData: {
             type: Object,
             required: true
-        }
-    },
-    data() {
-        return {
-            selectedData: {}
+        },
+        selectedData: {
+            type: Object,
+            required: true
         }
     },
     methods: {
         formatInputData(key, data) {
             let obj = {};
             obj[key] = data;
+
+            if (key === 'prices') {
+                obj.select = {
+                    min: this.selectedData.price_min,
+                    max: this.selectedData.price_max
+                }
+            } else {
+                obj.select = this.selectedData[key]
+            }
+
             return obj;
         },
         setDataFilter(arr) {
@@ -60,6 +69,8 @@ export default {
         },
         sendKey() {
             if (Object.keys(this.selectedData).length > 0) {
+                delete this.selectedData.page;
+
                 this.$router.push({name: 'filteredTires', query: this.selectedData});
             }
 

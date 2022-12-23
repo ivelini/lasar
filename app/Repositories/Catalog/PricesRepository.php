@@ -21,21 +21,22 @@ class PricesRepository extends CoreRepository
 
     public function getPaginationByFilterData($data, $paginate = 20)
     {
-        $data = [
-//            'price'     => ['min' => 0, 'max' => 3200],
-            'vendorId'  => 4,
+//        $data = [
+//            'price_min'     => 10000,
+//            'price_max'     => 11000,
+//            'vendorId'  => 1,
 //            'modelId'   => 727,
 //            'seasonId'  => 1,
-            'width'     => 185,
-            'height'    => 55,
-            'diameter'  => 16,
+//            'width'     => 185,
+//            'height'    => 55,
+//            'diameter'  => 16,
 //            'isSpikes'  => 1,
-        ];
+//        ];
 
         $paginator = $this->startConditions();
 
-        if (array_key_exists('price.min', $data)) $paginator = $paginator->where('price', '>=', $data['price.min']);
-        if (array_key_exists('price.max', $data)) $paginator = $paginator->where('price', '<=', $data['price.max']);
+        if (array_key_exists('price_min', $data)) $paginator = $paginator->where('price', '>=', $data['price_min']);
+        if (array_key_exists('price_max', $data)) $paginator = $paginator->where('price', '<=', $data['price_max']);
 
         $paginator = $paginator->whereHasMorph(
                 'priceable',

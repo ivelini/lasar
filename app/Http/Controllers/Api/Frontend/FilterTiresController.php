@@ -32,8 +32,6 @@ class FilterTiresController extends Controller
     {
         $data = $request->query();
 
-        logger($data);
-
         $paginatePage = (new PricesRepository)->getPaginationByFilterData($data);
 
         return json_encode($paginatePage);

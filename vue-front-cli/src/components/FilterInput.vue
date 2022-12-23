@@ -30,8 +30,12 @@
             <div data-v-14a2e3ec="" class="toggle-list-content">
                 <div data-v-14a2e3ec="" class="price-fields">
                     <div data-v-14a2e3ec="" class="inputs">
-                        <input data-v-14a2e3ec="" type="text" id="price-min" :value="data[key].min" @blur="setPrice($event.target, 'min')">
-                        <input data-v-14a2e3ec="" type="text" id="price-max" :value="data[key].max" @blur="setPrice($event.target, 'max')">
+                        <input data-v-14a2e3ec="" type="text" id="price-min"
+                               :value="data.select.min ? data.select.min : data[key].min"
+                               @blur="setPrice($event.target, 'min')">
+                        <input data-v-14a2e3ec="" type="text" id="price-max"
+                               :value="data.select.max ? data.select.max : data[key].max"
+                               @blur="setPrice($event.target, 'max')">
                     </div>
                     <div data-v-14a2e3ec="" class="labels">
                         <label data-v-14a2e3ec="" for="price-min">От</label>
@@ -66,6 +70,18 @@ export default {
     },
     mounted() {
         this.key = Object.keys(this.data)[0];
+
+        if (typeof (this.data.select) != 'undefined' && typeof (this.data.select) != 'object') {
+            let elInput = this.$refs.divCustomSelect.children[1];
+            this.addRemoveClass(this.$refs.divCustomSelect, 'selected', 'add')
+            this.data[this.key].forEach(el => {
+                if( typeof el == 'object' && el.id == this.data.select) {
+                    elInput.value = el.name
+                } else if (typeof el == 'number') {
+                    elInput.value = this.data.select
+                }
+            })
+        }
     },
     methods: {
         inputClick(el) {
@@ -87,7 +103,7 @@ export default {
             this.elInput.value = '';
             this.addRemoveClass(this.divCustomSelectOptions, 'active', 'remove')
             this.addRemoveClass(this.$refs.divCustomSelect, 'selected')
-            this.$emit('removeKey', key )
+            this.$emit('removeKey', key)
         },
         addRemoveClass(element, className, action = null) {
             let classElement = element.classList
@@ -99,8 +115,8 @@ export default {
         setPrice(el, key) {
             if(el.value != ''){
                 let arr = []
-                arr['key'] = 'price.' + key
-                arr['value'] =  el.value
+                arr['key'] = 'price_' + key
+                arr['value'] =  el.value.replace(/ /g,'')
                 this.$emit('setSelectedInput', arr )
             } else {
                 this.$emit('removeKey', 'price.' + key )

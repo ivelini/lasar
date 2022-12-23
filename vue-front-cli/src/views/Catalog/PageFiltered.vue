@@ -5,7 +5,8 @@
             <div data-v-74ca2ebb="" class="row grid-4 gap-20">
                 <div data-v-74ca2ebb="" class="col-1">
                     <filter-section
-                        :filtered-data="filter.filteredParams">
+                        :filtered-data="filter.filteredParams"
+                        :selected-data="filter.selectedParams">
                         Найти шины
                     </filter-section>
                 </div>
@@ -93,6 +94,7 @@ export default {
             },
             filter: {
                 filteredParams: {},
+                selectedParams: {},
                 filteredData: {},
                 filteredItems: [],
             },
@@ -105,6 +107,7 @@ export default {
     mounted() {
         // if (this.paramsToString().length === 0) this.$router.push({ name: 'main' });
         this.getFilteredData()
+        this.getSelectedParams()
         this.getItems()
     },
     beforeRouteUpdate(to, from, next) {
@@ -134,6 +137,12 @@ export default {
                 console.log('error: ', error.data)
             })
         },
+        getSelectedParams() {
+            let searchParams = (new URL(window.location.href)).searchParams;
+            searchParams.forEach((value, key) => {
+                this.filter.selectedParams[key] = value;
+            })
+        },
         getItems(url = null) {
             url = (url == null) ?
                 this.apiUrl.getFilteredTires + '?' + this.paramsToString() :
@@ -141,7 +150,6 @@ export default {
 
             axios.get(url)
                 .then(response => {
-                    console.log(response.data)
                     this.filter.filteredItems = response.data.items
                     this.paginator = response.data.paginator
                 })

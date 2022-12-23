@@ -66,7 +66,9 @@ export default {
             this.$emit('updatePrice', this.urlId);
         },
         download() {
-            let fileName = '' + this.labelName + '' + this.storage + '.csv';
+            let fileName = (this.storage != null) ?
+                '' + this.labelName + '' + this.storage + '.csv' :
+                '' + this.labelName  + '.csv';
 
             axios.get('http://lasar/api/catalog/import-price-xml/get-file?fileName=' + fileName, { responseType: 'blob' })
                 .then((response) => {

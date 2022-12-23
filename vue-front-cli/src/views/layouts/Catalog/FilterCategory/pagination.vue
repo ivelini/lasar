@@ -7,8 +7,7 @@
                    :href="setUrl(item)"
                    aria-current="page"
                    :class="{'active': item == current_page ? true : false}"
-                    @click.prevent="clickLink(item)"
-                >
+                    @click.prevent="clickLink(item)">
                     {{ item }}
                 </a>
             </li>
@@ -39,12 +38,18 @@ export default {
 
             end = this.current_page + 2 <= this.last_page ? this.current_page + 2 : this.current_page + 1;
             end = this.current_page + 3 == 5 ? this.current_page + 3 : end;
+        }
 
+        if (this.current_page == this.last_page) {
+            start = this.current_page - 4 > 0 ? this.current_page - 4 : this.current_page - 1;
+
+            end = this.last_page
         }
 
         for (let i = start; i <= end; i++) {
             this.arr.push(i)
         }
+        console.log(end)
         this.current = this.current_page;
     },
     methods: {
